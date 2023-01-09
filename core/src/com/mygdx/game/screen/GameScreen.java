@@ -270,6 +270,10 @@ public class GameScreen extends ScreenAdapter {
         guiWeapon.drawRectangle(player.getEquipment().getRightHand().getImage(),camera2,batch2,shapeRenderer,15,-3);
         guiWardrobe.drawRectangle(player.getEquipment().getWardrobe().getImage(),camera2,batch2,shapeRenderer,0,0);
         guiItem.drawRectangle(player.getEquipment().getItemSlot().getImage(),camera2,batch2,shapeRenderer,0,0);
+        if (player.getEquipment().getItemSlot().getId()!=0) {
+            guiItem.showItemName(player.getEquipment().getItemSlot(), batch2, camera2, 45, 15);
+        }
+
 
 
         if (Gdx.input.isKeyPressed(Input.Keys.L)) {

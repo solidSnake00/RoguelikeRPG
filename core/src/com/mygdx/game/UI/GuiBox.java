@@ -7,9 +7,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.mygdx.game.data.Door;
 import com.mygdx.game.data.GameObject;
+import com.mygdx.game.data.inventory.Item;
 import com.mygdx.game.data.player.Player;
 
 public class GuiBox implements UIBox{
@@ -20,6 +22,8 @@ public class GuiBox implements UIBox{
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private BitmapFont font;
+    private FreeTypeFontGenerator generator;
+    private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
 
     public GuiBox(int x, int y, int height, int width){
         batch=new SpriteBatch();
@@ -29,6 +33,12 @@ public class GuiBox implements UIBox{
         this.y=y;
         this.height=height;
         this.width=width;
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("Moder DOS 437 Win.ttf"));
+        parameter=new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size=15;
+        parameter.borderWidth=1;
+
+        font=generator.generateFont(parameter);
     }
     @Override
     public void drawRectangle(int x, int y, int height, int width, Camera camera, String value, Texture image) {
@@ -115,5 +125,14 @@ public class GuiBox implements UIBox{
         shapeRenderer.setColor(Color.DARK_GRAY);
         shapeRenderer.rect(x,y,width,height);
         shapeRenderer.end();
+    }
+    public void showItemName(Item item,SpriteBatch batch,Camera camera,int x,int y){
+        parameter.size=14;
+        font=generator.generateFont(parameter);
+        batch.begin();
+        batch.setProjectionMatrix(camera.combined);
+        font.draw(batch,item.getName(),x,y);
+        batch.end();
+
     }
 }
