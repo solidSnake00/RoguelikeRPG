@@ -30,13 +30,6 @@ public class Main extends Game {
 		shieldList=importObjectItemCSV.importShields(path+"shields.csv");
 		armorList=importObjectItemCSV.importArmors(path+"armors.csv");
 		gameState=GameState.NORMAL;
-		/*player=new Player("player_img.png",weaponList.get(0),shieldList.get(0),armorList.get(0));
-
-		player.setX(2);
-		player.setY(2);
-		player.setTileType(TileType.SOLID);*/
-
-
 
 		setScreen(new GameScreen(this,player,weaponList,shieldList,armorList,itemList,gameState));
 	}

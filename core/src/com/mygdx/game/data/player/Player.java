@@ -391,17 +391,13 @@ public class Player implements GameObject {
             lock.setLocked(false);
             enemy.setTileType(TileType.TRAVERSABLE);
             enemy.setImage("blank.png");
-            enemy.setEnemyAIEnum(EnemyAIEnum.FOLLOW_PLAYER);
+            enemy.setEnemyAIEnum(EnemyAIEnum.NO_AI);
 
 
             EmptyObject emptyObject=new EmptyObject();
             emptyObject.setY(enemy.getY());
             emptyObject.setX(enemy.getX());
             mapObject.setGameObjectToCell(emptyObject);
-            /*batch.begin();
-            batch.setProjectionMatrix(camera.combined);
-            batch.draw(new Texture("blood_img.png"),enemy.getX()*32,enemy.getY()*32);
-            batch.end();*/
 
         }else {
             float defAbs= (float) (stats.getAtk()*enemy.getDef())/100;

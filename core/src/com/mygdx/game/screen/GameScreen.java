@@ -1,5 +1,6 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
@@ -237,6 +238,8 @@ public class GameScreen extends ScreenAdapter {
                         //enemy.followPlayer(player, mapObject, gameState);
                     } else if (enemy.getEnemyAIEnum() == EnemyAIEnum.RANDOM_MOVEMENT) {
                         enemy.randomMovement(player,mapObject, gameState);
+                    } else if (enemy.getEnemyAIEnum()==EnemyAIEnum.NO_AI) {
+
                     }
                     mapObject.setGameObjectToCell(enemy);
                 }
@@ -263,9 +266,9 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.E) || player.getStats().getHP()<=0) {
-            dispose();
-            show();
+            main.setScreen(new GameScreen(main,player,weaponList,shieldList,armorList,itemList,gameState));
         }
+
         guiShield.drawRectangle(player.getEquipment().getLeftHand().getImage(),camera2,batch2,shapeRenderer,-15,0);
         guiWeapon.drawRectangle(player.getEquipment().getRightHand().getImage(),camera2,batch2,shapeRenderer,15,-3);
         guiWardrobe.drawRectangle(player.getEquipment().getWardrobe().getImage(),camera2,batch2,shapeRenderer,0,0);
