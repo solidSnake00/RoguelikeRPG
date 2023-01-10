@@ -2,6 +2,8 @@ package com.mygdx.game.data;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
+import com.mygdx.game.UI.DialogBox;
+import com.mygdx.game.UI.UIBox;
 
 public class MessageTile implements GameObject{
     private int id;
@@ -10,9 +12,21 @@ public class MessageTile implements GameObject{
     private Texture image;
     private TileType tileType;
     private String text;
+    private UIBox uiBox;
 
     public MessageTile(){
         tileType=TileType.TRAVERSABLE;
+        image=new Texture("message_img.png");
+        uiBox=new DialogBox();
+    }
+    public MessageTile(int id,int x,int y,String text){
+        this.id=id;
+        this.x=x;
+        this.y=y;
+        this.text=text;
+        tileType=TileType.TRAVERSABLE;
+        image=new Texture("message_img.png");
+        uiBox=new DialogBox();
     }
 
     public String getText() {
@@ -75,5 +89,9 @@ public class MessageTile implements GameObject{
     @Override
     public void die() {
 
+    }
+
+    public void drawMessage(int x,int y,int height,int width,Camera camera,String text){
+        uiBox.messageUI(x,y,height,width,camera,text);
     }
 }

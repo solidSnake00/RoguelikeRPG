@@ -61,6 +61,11 @@ public class GuiBox implements UIBox{
     }
 
     @Override
+    public void messageUI(int x, int y, int height, int width, Camera camera, String text) {
+
+    }
+
+    @Override
     public Boolean getShow() {
         return null;
     }

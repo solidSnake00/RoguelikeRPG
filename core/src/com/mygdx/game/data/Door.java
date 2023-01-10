@@ -55,6 +55,7 @@ public class Door implements GameObject{
 
     @Override
     public Texture getImage() {
+
         return image;
     }
 
@@ -114,5 +115,8 @@ public class Door implements GameObject{
 
     public void setOpened(Boolean opened) {
         isOpened = opened;
+        if (isOpened){
+            setImage("door_1_open_img.png");
+        }
     }
 }

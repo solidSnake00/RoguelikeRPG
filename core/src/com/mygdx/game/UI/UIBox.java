@@ -16,6 +16,7 @@ public interface UIBox {
     void drawRectangle(Door door, int x, int y, int height, int width, Camera camera, String value);
     void drawRectangle(Player player, Camera camera, SpriteBatch batch);
     void drawRectangle(GameObject gameObject, Camera camera, SpriteBatch batch);
+    void messageUI(int x,int y,int height,int width,Camera camera,String text);
 
     Boolean getShow();
     void setShow(Boolean show);

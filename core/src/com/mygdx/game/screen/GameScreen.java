@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -59,6 +60,9 @@ public class GameScreen extends ScreenAdapter {
 
    private Door door;
 
+   private MessageTile messageTile;
+   private BitmapFont font;
+
     public GameScreen(Main main, Player player,List<Weapon> weaponList, List<Shield> shieldList,
                       List<Armor> armorList, List<Item> itemList, GameState gameState){
         this.main=main;
@@ -73,6 +77,9 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         super.show();
+
+        messageTile=new MessageTile(0,1,8,"this a test message");
+        font=new BitmapFont();
 
         door=new Door();
         door.setImage("door_1_img.png");
@@ -128,6 +135,7 @@ public class GameScreen extends ScreenAdapter {
 
         //mapObject.setGameObjectToCell(player);
         mapObject.setGameObjectToCell(door);
+        mapObject.setGameObjectToCell(messageTile);
         mapObject.setGameObjectToCell(player);
 
         for (Chest chest : chestList) {
@@ -275,6 +283,12 @@ public class GameScreen extends ScreenAdapter {
         guiItem.drawRectangle(player.getEquipment().getItemSlot().getImage(),camera2,batch2,shapeRenderer,0,0);
         if (player.getEquipment().getItemSlot().getId()!=0) {
             guiItem.showItemName(player.getEquipment().getItemSlot(), batch2, camera2, 45, 15);
+        }
+
+        if (player.getX()== messageTile.getX() && player.getY() == messageTile.getY()){
+            //if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+                messageTile.drawMessage(100,150,100,400,camera2, messageTile.getText());
+            //}
         }
 
 

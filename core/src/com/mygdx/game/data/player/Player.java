@@ -416,7 +416,7 @@ public class Player implements GameObject {
             System.out.println("item used");
         }
 
-        if (item.getId()!=0) {
+        if (item.getId()!=0 && item.getItemType()==ItemType.CONSUMABLE) {
             inventory.deleteItem(item.getId());
             b--;
             if (b <= 0) {

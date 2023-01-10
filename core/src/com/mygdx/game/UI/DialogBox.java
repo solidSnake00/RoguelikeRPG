@@ -164,4 +164,29 @@ public class DialogBox implements UIBox{
     public SpriteBatch getBatch(){
         return batch;
     }
+
+    public void messageUI(int x,int y,int height,int width,Camera camera,String text){
+        parameter.size=17;
+        font=generator.generateFont(parameter);
+
+        if (getShow()){
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.setColor(/*Color.GRAY*/Color.DARK_GRAY);
+            shapeRenderer.rect(x,y,width,height);
+            shapeRenderer.end();
+
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.setColor(Color.WHITE);
+            shapeRenderer.rect(x,y,width,height);
+            shapeRenderer.end();
+
+            batch.begin();
+            batch.setProjectionMatrix(camera.combined);
+            font.draw(batch,text,x+10,y+45);
+            batch.end();
+        }
+
+    }
 }

@@ -78,6 +78,11 @@ public class ImportObjectItemCSV {
             {
                 String[] sd = line.split(splitBy);
                 item=new Item(Integer.parseInt(sd[0]),sd[1],sd[2],sd[3]);
+                if (Integer.parseInt(sd[4])==1){
+                    item.setItemType(ItemType.CONSUMABLE);
+                } else if (Integer.parseInt(sd[4])==2) {
+                    item.setItemType(ItemType.KEY);
+                }
                 itemList.add(item);
             }
         }
