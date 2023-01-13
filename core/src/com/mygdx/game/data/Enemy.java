@@ -269,7 +269,7 @@ public class Enemy implements GameObject{
 
             int randomNum = random.nextInt((7 - 1) + 1) + 1;
 
-            if (randomNum==1 && mapObject.getCell(getX(),getY()+1).getGameObject().getTileType() != TileType.SOLID){
+            if (randomNum==1 && mapObject.getCell(getX(),getY()+1).getGameObject().getTileType() != TileType.SOLID ){
 
                 moveUp();
                 if (x==player1.getX() && y==player1.getY()){

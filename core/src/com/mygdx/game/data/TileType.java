@@ -1,5 +1,5 @@
 package com.mygdx.game.data;
 
 public enum TileType {
-    SOLID,TRAVERSABLE,ENEMY
+    SOLID,TRAVERSABLE,ENEMY,PLAYER
 }

@@ -1,0 +1,47 @@
+1 - Player
+
+2 -> 99 - Walls
+-5 -> dungeon wall
+-10 -> water
+-15 ->outdoor wall
+
+100 -> 299 - Chest
+-101 -> healing potion small
+-102 -> healing potion big
+-110 -> shield#1
+-111 -> weapon#1
+-112 -> weapon#3
+-201 -> armor#1
+-210 -> key#1
+
+-----------------------------
+501 -> skeleton#1 RANDOM
+502 -> skeleton#1 FOLLOW
+503 -> skeleton#1 NO_AI
+
+504 -> Evil Blob RANDOM
+506 -> Evil Blob NO_AI
+
+507 -> Evil Plant RANDOM
+509 -> Evil Plant NO_AI
+
+510 -> Fat Ghost RANDOM
+512 -> Fat Ghost NO_AI
+
+513 -> Red Orb RANDOM
+515 -> Red Orb NO_AI
+
+516 -> Skeleton Witch RANDOM
+518 -> Skeleton Witch NO_AI
+
+519 -> Ghoul RANDOM
+521 -> Ghoul NO_AI
+
+
+1001 -> message#1
+
+700 -> door#1
+
+
+802 -> transfer room 2
+

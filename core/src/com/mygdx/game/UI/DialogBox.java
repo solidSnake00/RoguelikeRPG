@@ -166,7 +166,7 @@ public class DialogBox implements UIBox{
     }
 
     public void messageUI(int x,int y,int height,int width,Camera camera,String text){
-        parameter.size=17;
+        parameter.size=16;
         font=generator.generateFont(parameter);
 
         if (getShow()){
@@ -184,7 +184,7 @@ public class DialogBox implements UIBox{
 
             batch.begin();
             batch.setProjectionMatrix(camera.combined);
-            font.draw(batch,text,x+10,y+45);
+            font.draw(batch,text,x+10,y+75);
             batch.end();
         }
 

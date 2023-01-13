@@ -35,6 +35,7 @@ public class Player implements GameObject {
     private final DecimalFormat df;
 
     public Player(Weapon weapon, Shield shield, Armor armor, Item item){
+        tileType=TileType.PLAYER;
         moved=false;
         x=0;
         y=0;
@@ -53,6 +54,7 @@ public class Player implements GameObject {
 
     }
     public Player(String imagePath, Weapon weapon, Shield shield, Armor armor, Item item){
+        tileType=TileType.PLAYER;
         moved=false;
         x=0;
         y=0;
@@ -118,7 +120,7 @@ public class Player implements GameObject {
 
     @Override
     public TileType getTileType() {
-        return null;
+        return tileType;
     }
 
     @Override
@@ -413,7 +415,11 @@ public class Player implements GameObject {
     public void useItem(Item item){
         if (item.getId()==1){
             stats.setHP(getStats().getHP()+10);
-            System.out.println("item used");
+            //System.out.println("item used");
+        }
+        if (item.getId()==3){
+            stats.setHP(getStats().getHP()+ stats.getHPLimit());
+            //System.out.println("item used");
         }
 
         if (item.getId()!=0 && item.getItemType()==ItemType.CONSUMABLE) {

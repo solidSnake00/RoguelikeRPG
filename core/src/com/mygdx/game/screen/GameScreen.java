@@ -4,16 +4,16 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.GameState;
 import com.mygdx.game.Main;
 import com.mygdx.game.Room;
@@ -32,10 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameScreen extends ScreenAdapter {
-   private Main main;
+   private final Main main;
    private SpriteBatch batch, batch2;
    private OrthographicCamera camera, camera2;
-   private Player player1;
    private MapObject mapObject;
    private GameObject[][] gameObjects;
    private int numberOfTiles;
@@ -59,9 +58,26 @@ public class GameScreen extends ScreenAdapter {
    private Vector2 cameraVector;
 
    private Door door;
+   private List<Door> doorList;
 
    private MessageTile messageTile;
    private BitmapFont font;
+   private List<MessageTile> messageTiles;
+   private OrthographicCamera cameraMapUI;
+   private Viewport uiMapView;
+   private List<Room> roomList;
+   private Room activeRoom;
+   private List<TransferRoom> transferRoomList;
+
+   public Room getRoomById(int id, List<Room> roomList){
+       for (Room value : roomList) {
+           if (value.getId() == id) {
+               return value;
+           }
+       }
+       return null;
+   }
+
 
     public GameScreen(Main main, Player player,List<Weapon> weaponList, List<Shield> shieldList,
                       List<Armor> armorList, List<Item> itemList, GameState gameState){
@@ -71,7 +87,6 @@ public class GameScreen extends ScreenAdapter {
         this.armorList=armorList;
         this.itemList=itemList;
         this.gameState=gameState;
-        this.player1=player;
     }
 
     @Override
@@ -81,11 +96,6 @@ public class GameScreen extends ScreenAdapter {
         messageTile=new MessageTile(0,1,8,"this a test message");
         font=new BitmapFont();
 
-        door=new Door();
-        door.setImage("door_1_img.png");
-        door.setX(9);
-        door.setY(12);
-        door.setKeyItem(itemList.get(1));
 
         shapeRenderer=new ShapeRenderer();
         bloodImg=new Texture("blood_img.png");
@@ -107,14 +117,30 @@ public class GameScreen extends ScreenAdapter {
 
         chestList=new ArrayList<>();
         path="assets\\";
+/////////////////////////////////////////////////////////////
+        roomList=new ArrayList<>();
+        room=new Room(1,81);
+        room.importCSV(path+"level1-1.csv");
+        room.setDecorationTileMapImage("ground.png");
 
-        room=new Room(1,20);
-        numberOfTiles=room.getNumberOfTiles();
+        roomList.add(room);
+
+        room=new Room(2,20);
         room.importCSV(path+"wall_layer.csv");
-        gameObjects=room.getGameObjects();
-        chestList=room.getImportObjectTileMapCSV().getChestList();
-        enemyList=room.getImportObjectTileMapCSV().getEnemyList();
+        room.setDecorationTileMapImage("ground.png");
+        roomList.add(room);
 
+        activeRoom=getRoomById(1,roomList);
+        numberOfTiles=activeRoom.getNumberOfTiles();
+        //room.importCSV(path+"wall_layer.csv");
+        //activeRoom.importCSV(path+"level1-1.csv");
+        gameObjects=activeRoom.getGameObjects();
+        chestList=activeRoom.getImportObjectTileMapCSV().getChestList();
+        enemyList=activeRoom.getImportObjectTileMapCSV().getEnemyList();
+        messageTiles=activeRoom.getImportObjectTileMapCSV().getMessageTiles();
+        doorList=activeRoom.getImportObjectTileMapCSV().getDoors();
+        transferRoomList=activeRoom.getImportObjectTileMapCSV().getTransferRoomList();
+////////////////////////////////////////////////////////////////////
 
         batch = new SpriteBatch();
         camera=new OrthographicCamera();
@@ -125,17 +151,20 @@ public class GameScreen extends ScreenAdapter {
         camera2=new OrthographicCamera();
         camera2.setToOrtho(false,640,480);
         camera2.update();
+        cameraMapUI=new OrthographicCamera();
+        cameraMapUI.setToOrtho(false,640,480);
+        cameraMapUI.update();
 
         mapObject =new MapObject(numberOfTiles,32);
 
-        room.setDecorationTileMapImage("ground.png");
-        groundDecorationMap=room.getDecorationTileMap();
+        //activeRoom.setDecorationTileMapImage("ground.png");
+        groundDecorationMap=activeRoom.getDecorationTileMap();
 
         mapObject.setAllTilesToCell(gameObjects);
 
         //mapObject.setGameObjectToCell(player);
-        mapObject.setGameObjectToCell(door);
-        mapObject.setGameObjectToCell(messageTile);
+        //mapObject.setGameObjectToCell(door);
+        //mapObject.setGameObjectToCell(messageTile);
         mapObject.setGameObjectToCell(player);
 
         for (Chest chest : chestList) {
@@ -144,36 +173,76 @@ public class GameScreen extends ScreenAdapter {
         for (Enemy enemy: enemyList){
             mapObject.setGameObjectToCell(enemy);
         }
+        for (MessageTile tile : messageTiles) {
+            mapObject.setGameObjectToCell(tile);
+        }
+        for (Door door1 : doorList) {
+            mapObject.setGameObjectToCell(door1);
+        }
+        for (TransferRoom transferRoom : transferRoomList){
+            mapObject.setGameObjectToCell(transferRoom);
+        }
 
         player.calculateStats();
+        player.setX(activeRoom.getImportObjectTileMapCSV().getPlayerX());
+        player.setY(activeRoom.getImportObjectTileMapCSV().getPlayerY());
 
         fitViewport=new FitViewport(640,480,camera);
         playerVector =new Vector2(player.getX()*32,player.getY()*32);
         cameraVector=new Vector2(camera.position.x,camera.position.y);
+        player.setTileType(TileType.PLAYER);
+
+        uiMapView=new FitViewport(200,200,cameraMapUI);
+        //uiMapView.setScreenBounds(800,50,200,200);
+
+        uiMapView.setScreenBounds(Gdx.graphics.getWidth()-290,Gdx.graphics.getHeight()-300,200,200);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
         ScreenUtils.clear(Color.BLACK, false);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.U)){
-            room.setId(2);
-            room.setNumberOfTiles(20);
-            room.importCSV(path+"wall_layer_2.csv");
-            gameObjects= room.getGameObjects();
-            chestList=room.getImportObjectTileMapCSV().getChestList();
-            enemyList=room.getImportObjectTileMapCSV().getEnemyList();
+        fitViewport.apply();
 
-            mapObject =new MapObject(numberOfTiles,32);
-            mapObject.setAllTilesToCell(gameObjects);
-            mapObject.setGameObjectToCell(player);
 
-            for (Chest chest : chestList) {
-                mapObject.setGameObjectToCell(chest);
+        for (int i=0;i<transferRoomList.size();i++){
+            if (player.getX()==transferRoomList.get(i).getX() && player.getY()==transferRoomList.get(i).getY()){
+
+                //if (transferRoomList.get(i).getId()==2){
+                    activeRoom=getRoomById(transferRoomList.get(i).getId(),roomList);
+                    numberOfTiles=activeRoom.getNumberOfTiles();
+                    //room.importCSV(path+"wall_layer.csv");
+                    //activeRoom.importCSV(path+"wall_layer.csv");
+                    gameObjects=activeRoom.getGameObjects();
+                    chestList=activeRoom.getImportObjectTileMapCSV().getChestList();
+                    enemyList=activeRoom.getImportObjectTileMapCSV().getEnemyList();
+                    messageTiles=activeRoom.getImportObjectTileMapCSV().getMessageTiles();
+                    doorList=activeRoom.getImportObjectTileMapCSV().getDoors();
+                    transferRoomList=activeRoom.getImportObjectTileMapCSV().getTransferRoomList();
+                    //activeRoom.setDecorationTileMapImage("ground.png");
+                    groundDecorationMap=activeRoom.getDecorationTileMap();
+
+                    player.setX(activeRoom.getImportObjectTileMapCSV().getPlayerX());
+                    player.setY(activeRoom.getImportObjectTileMapCSV().getPlayerY());
+
+                    mapObject =new MapObject(activeRoom.getNumberOfTiles(),32);
+                    mapObject.setAllTilesToCell(gameObjects);
+                    mapObject.setGameObjectToCell(player);
+
+                    for (Chest chest:chestList){
+                        mapObject.setGameObjectToCell(chest);
+                    }
+                    for (MessageTile message:messageTiles){
+                        mapObject.setGameObjectToCell(message);
+                    }
+                    for (Door door1:doorList){
+                        mapObject.setGameObjectToCell(door1);
+                    }
+                    break;
+                //}
             }
-
-
         }
+
 
         if (player.getX()<=gameObjects[0][0].getX()+5){
             camera.position.x=(gameObjects[0][0].getX()+5)*32;
@@ -206,8 +275,12 @@ public class GameScreen extends ScreenAdapter {
             camera.position.y=player.getY()*32;
         }
 
+
         camera.update();
         camera2.update();
+        cameraMapUI.position.x=player.getX()*5+201;
+        cameraMapUI.position.y=player.getY() *5+201;
+        cameraMapUI.update();
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -269,11 +342,14 @@ public class GameScreen extends ScreenAdapter {
                 chest.drawUI(camera2);
             }
         }
-        if (door.getShowUI()){
-            door.drawUI(camera2);
+        for (Door value : doorList) {
+
+            if (value.getShowUI()) {
+                value.drawUI(camera2);
+            }
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.E) || player.getStats().getHP()<=0) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R) || player.getStats().getHP()<=0) {
             main.setScreen(new GameScreen(main,player,weaponList,shieldList,armorList,itemList,gameState));
         }
 
@@ -285,38 +361,56 @@ public class GameScreen extends ScreenAdapter {
             guiItem.showItemName(player.getEquipment().getItemSlot(), batch2, camera2, 45, 15);
         }
 
-        if (player.getX()== messageTile.getX() && player.getY() == messageTile.getY()){
-            //if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-                messageTile.drawMessage(100,150,100,400,camera2, messageTile.getText());
-            //}
+        for (int i=0;i<messageTiles.size();i++) {
+            if (player.getX() == messageTiles.get(i).getX() && player.getY() == messageTiles.get(i).getY()) {
+                //if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+                messageTiles.get(i).drawMessage(100, 150, 100, 400, camera2, messageTiles.get(i).getText());
+                //}
+            }
         }
 
 
 
-        if (Gdx.input.isKeyPressed(Input.Keys.L)) {
+
+            uiMapView.apply();
 
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.setProjectionMatrix(camera2.combined);
-            shapeRenderer.setColor(new Color(0, 0, 0, 0.5f));
-            shapeRenderer.rect(10, 10, 200, 200);
+            shapeRenderer.setProjectionMatrix(cameraMapUI.combined);
+            shapeRenderer.setColor(new Color(0, 0, 0, 0.8f));
+            shapeRenderer.rect((cameraMapUI.position.x/*player.getX()*5+201*/)-100, (cameraMapUI.position.y/*player.getY()*5+201*/)-100, 400, 400);
+            for (int i=0;i<activeRoom.getNumberOfTiles();i++){
+                for (int j=0;j<activeRoom.getNumberOfTiles();j++){
+                    if (mapObject.getCell(i,j).getGameObject().getTileType()==TileType.SOLID){
+                        shapeRenderer.setColor(new Color(1, 0, 0, 0.5f));
+                        shapeRenderer.rect(i*5+201,j*5+201,5,5);
+                    }else if (mapObject.getCell(i,j).getGameObject().getTileType()==TileType.ENEMY){
+                        //shapeRenderer.setColor(new Color(0.9f,0.9f,1f,0.5f));
+                        shapeRenderer.setColor(new Color(0f,1f,1f,0.5f));
+                        shapeRenderer.rect(i*5+201,j*5+201,5,5);
+                    }
+                }
+            }
+            shapeRenderer.setColor(new Color(0,0,1,0.5f));
+            shapeRenderer.rect(player.getX()*5+201, player.getY() *5+201,5,5);
             shapeRenderer.end();
-            batch2.begin();
-            batch2.setProjectionMatrix(camera2.combined);
-            batch2.setColor(new Color(1, 1, 1, 0.5f));
-            batch2.draw(player.getImage(), 100, 100);
-            batch2.end();
-            Gdx.gl.glDisable(GL20.GL_BLEND);
-        }
 
+            Gdx.gl.glDisable(GL20.GL_BLEND);
 
     }
+
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
         fitViewport.update(width,height,true);
+        uiMapView.update(width,height,true);
+        uiMapView.setScreenBounds(width-(width/4),30,200,200);
+        System.out.println("width: "+width);
+        System.out.println("height: "+height);
+
+
     }
 
     @Override

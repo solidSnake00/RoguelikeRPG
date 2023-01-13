@@ -7,6 +7,7 @@ import com.mygdx.game.UI.UIBox;
 import com.mygdx.game.data.inventory.Item;
 
 public class Door implements GameObject{
+    private int id;
     private int x;
     private int y;
     private Texture image;
@@ -22,6 +23,23 @@ public class Door implements GameObject{
         isOpened=false;
         tileType=TileType.SOLID;
         showUI=false;
+    }
+
+    public Door(int id, Item keyItem){
+        this.id=id;
+        uiBox=new DialogBox();
+        this.keyItem=keyItem;
+        isOpened=false;
+        tileType=TileType.SOLID;
+        showUI=false;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Boolean getShowUI() {

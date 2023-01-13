@@ -2,54 +2,25 @@ package com.mygdx.game.data;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.mygdx.game.UI.DialogBox;
-import com.mygdx.game.UI.UIBox;
+import com.mygdx.game.Room;
 
-public class MessageTile implements GameObject{
+public class TransferRoom implements GameObject{
     private int id;
     private int x;
     private int y;
     private Texture image;
+    private Room room;
+    private int roomId;
     private TileType tileType;
-    private String text;
-    private UIBox uiBox;
 
-    public MessageTile(){
-        tileType=TileType.TRAVERSABLE;
-        image=new Texture("message_img.png");
-        uiBox=new DialogBox();
-    }
-    public MessageTile(int id,int x,int y,String text){
+    public TransferRoom(){}
+    public TransferRoom(int id,int x,int y, String imagePath,int roomId){
         this.id=id;
         this.x=x;
         this.y=y;
-        this.text=text;
+        image=new Texture(imagePath);
+        this.roomId=roomId;
         tileType=TileType.TRAVERSABLE;
-        image=new Texture("message_img.png");
-        uiBox=new DialogBox();
-    }
-    public MessageTile(int id, String text){
-        this.id=id;
-        this.text=text;
-        tileType=TileType.TRAVERSABLE;
-        image=new Texture("message_img.png");
-        uiBox=new DialogBox();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     @Override
@@ -82,6 +53,7 @@ public class MessageTile implements GameObject{
     public void setX(int x) {
         this.x=x;
 
+
     }
 
     @Override
@@ -98,7 +70,6 @@ public class MessageTile implements GameObject{
     @Override
     public void setTileType(TileType tileType) {
         this.tileType=tileType;
-
     }
 
     @Override
@@ -106,7 +77,19 @@ public class MessageTile implements GameObject{
 
     }
 
-    public void drawMessage(int x,int y,int height,int width,Camera camera,String text){
-        uiBox.messageUI(x,y,height,width,camera,text);
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 }

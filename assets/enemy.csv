@@ -1,1 +1,7 @@
-0,Skeleton,skeleton_img.png,1,5,10,50
+0,Skeleton,skeleton_img.png,1,5,3,50
+1,Blue Blob,blob_1_img.png,1,3,6,35
+2,Evil Plant,plant_1_img.png,1,5,1,80
+3,Fat Ghost,fat_green_img.png,1,6,5,60
+4,Red Eye Orb,eye_red_img.png,1,6,9,55
+5,Skeleton Witch,witch_violet_img.png,1,8,6,50
+6,Ghoul,ghoul_1_img.png,1,9,13,70
