@@ -2,6 +2,7 @@ package com.mygdx.game.data.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -33,8 +34,18 @@ public class Player implements GameObject {
     private TileType tileType;
     private final BitmapFont font;
     private final DecimalFormat df;
+    private Sound sound;
+    private Sound sound2;
+    private Sound sound3;
+    private Sound sound4;
+    float ff=01f;
 
     public Player(Weapon weapon, Shield shield, Armor armor, Item item){
+        sound=Gdx.audio.newSound(Gdx.files.internal("hit.ogg"));
+        sound2=Gdx.audio.newSound(Gdx.files.internal("open chest.ogg"));
+        sound3=Gdx.audio.newSound(Gdx.files.internal("cloth3.ogg"));
+        sound4=Gdx.audio.newSound(Gdx.files.internal("bottle.ogg"));
+
         tileType=TileType.PLAYER;
         moved=false;
         x=0;
@@ -54,6 +65,13 @@ public class Player implements GameObject {
 
     }
     public Player(String imagePath, Weapon weapon, Shield shield, Armor armor, Item item){
+        sound=Gdx.audio.newSound(Gdx.files.internal("hit.ogg"));
+
+        sound2=Gdx.audio.newSound(Gdx.files.internal("open chest.ogg"));
+
+        sound3=Gdx.audio.newSound(Gdx.files.internal("cloth3.ogg"));
+        sound4=Gdx.audio.newSound(Gdx.files.internal("bottle.ogg"));
+
         tileType=TileType.PLAYER;
         moved=false;
         x=0;
@@ -280,6 +298,7 @@ public class Player implements GameObject {
             if (a >=inventory.getAllShields().size()){
                 a =0;
             }
+            sound3.play(ff);
             equipment.setLeftHand(inventory.getAllShields().get(a));
             calculateStats();
         }
@@ -288,6 +307,7 @@ public class Player implements GameObject {
             if (f >=inventory.getAllWeapons().size()){
                 f =0;
             }
+            sound3.play(ff);
             equipment.setRightHand(inventory.getAllWeapons().get(f));
             calculateStats();
 
@@ -297,6 +317,7 @@ public class Player implements GameObject {
             if (c >=inventory.getAllArmors().size()){
                 c =0;
             }
+            sound3.play(ff);
             equipment.setWardrobe(inventory.getAllArmors().get(c));
             calculateStats();
 
@@ -306,6 +327,7 @@ public class Player implements GameObject {
             if (b >=inventory.getAllItems().size()){
                 b =0;
             }
+            sound3.play(ff);
             equipment.setItemSlot(inventory.getAllItems().get(b));
             //System.out.println(inventory.getAllItems().get());
         }
@@ -378,6 +400,7 @@ public class Player implements GameObject {
 
         chest.setIsEmpty(true);
         inventory.setObjectItem(chest.getObjectItem());
+        sound2.play(ff);
         objectItemList=inventory.getAllObjectItem();
 
         System.out.println("inventory list:");
@@ -402,7 +425,10 @@ public class Player implements GameObject {
             mapObject.setGameObjectToCell(emptyObject);
 
         }else {
+
             float defAbs= (float) (stats.getAtk()*enemy.getDef())/100;
+
+            sound.play(ff);
 
             System.out.println("defabs= "+df.format(defAbs));
             enemy.setHP((enemy.getHP()-(getStats().getAtk()-defAbs)));
@@ -415,10 +441,12 @@ public class Player implements GameObject {
     public void useItem(Item item){
         if (item.getId()==1){
             stats.setHP(getStats().getHP()+10);
+            sound4.play(0.05f);
             //System.out.println("item used");
         }
         if (item.getId()==3){
             stats.setHP(getStats().getHP()+ stats.getHPLimit());
+            sound4.play(0.05f);
             //System.out.println("item used");
         }
 
@@ -445,6 +473,13 @@ public class Player implements GameObject {
         }
         door.setShowUI(true);
 
+    }
+
+    public void disposeSound(){
+        sound.dispose();
+        sound2.dispose();
+        sound3.dispose();
+        sound4.dispose();
     }
 
 }

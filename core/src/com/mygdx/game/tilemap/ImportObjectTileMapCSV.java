@@ -189,6 +189,24 @@ public class ImportObjectTileMapCSV {
                             chest.setY(i);
                             chest.setTileType(TileType.SOLID);
                             chestList.add(chest);
+                        } else if (Integer.parseInt(sd[l])==120) {
+                            gameObjects[l][i]=new Chest();
+                            chest=(Chest) gameObjects[l][i];
+                            chest.setObjectItem(shieldList.get(3));
+                            chest.setImage("chest_closed_img.png");
+                            chest.setX(l);
+                            chest.setY(i);
+                            chest.setTileType(TileType.SOLID);
+                            chestList.add(chest);
+                        } else if (Integer.parseInt(sd[l])==121) {
+                            gameObjects[l][i]=new Chest();
+                            chest=(Chest) gameObjects[l][i];
+                            chest.setObjectItem(armorList.get(3));
+                            chest.setImage("chest_closed_img.png");
+                            chest.setX(l);
+                            chest.setY(i);
+                            chest.setTileType(TileType.SOLID);
+                            chestList.add(chest);
                         }
                     }
 
@@ -342,11 +360,21 @@ public class ImportObjectTileMapCSV {
                         transferRoom.setId(2);
                         transferRoom.setX(l);
                         transferRoom.setY(i);
-                        transferRoom.setImage("ladder_img.png");
+                        transferRoom.setImage("ladder_2_img.png");
                         transferRoom.setRoomId(2);
 
                         transferRoomList.add(transferRoom);
                         
+                    } else if (Integer.parseInt(sd[l])==803) {
+                        gameObjects[l][i]=new TransferRoom();
+                        TransferRoom transferRoom= (TransferRoom) gameObjects[l][i];
+                        transferRoom.setId(3);
+                        transferRoom.setX(l);
+                        transferRoom.setY(i);
+                        transferRoom.setImage("ladder_img.png");
+                        transferRoom.setRoomId(3);
+
+                        transferRoomList.add(transferRoom);
                     } else {
                         gameObjects[l][i]=null;
                     }

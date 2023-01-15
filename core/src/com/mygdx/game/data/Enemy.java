@@ -264,7 +264,7 @@ public class Enemy implements GameObject{
     }
 
     public void randomMovement(Player player,MapObject mapObject, GameState gameState){
-        Player player1=mapObject.getPlayer();
+        //Player player1=mapObject.getPlayer();
         if (gameState==GameState.NORMAL){
 
             int randomNum = random.nextInt((7 - 1) + 1) + 1;
@@ -272,8 +272,8 @@ public class Enemy implements GameObject{
             if (randomNum==1 && mapObject.getCell(getX(),getY()+1).getGameObject().getTileType() != TileType.SOLID ){
 
                 moveUp();
-                if (x==player1.getX() && y==player1.getY()){
-                    randomMovement(player1,mapObject,gameState);
+                if (x==player.getX() && y==player.getY()){
+                    randomMovement(player,mapObject,gameState);
                 }
                 EmptyObject emptyObject=new EmptyObject();
                 emptyObject.setX(x);
@@ -284,8 +284,8 @@ public class Enemy implements GameObject{
 
             if (randomNum==2 && mapObject.getCell(getX(),getY()-1).getGameObject().getTileType() != TileType.SOLID){
                 moveDown();
-                if (x==player1.getX() && y==player1.getY()){
-                    randomMovement(player1,mapObject,gameState);
+                if (x==player.getX() && y==player.getY()){
+                    randomMovement(player,mapObject,gameState);
                 }
                 EmptyObject emptyObject=new EmptyObject();
                 emptyObject.setX(x);
@@ -295,8 +295,8 @@ public class Enemy implements GameObject{
             }
             if (randomNum==3 && mapObject.getCell(getX()-1,getY()).getGameObject().getTileType() != TileType.SOLID){
                 moveLeft();
-                if (x==player1.getX() && y==player1.getY()){
-                    randomMovement(player1,mapObject,gameState);
+                if (x==player.getX() && y==player.getY()){
+                    randomMovement(player,mapObject,gameState);
                 }
                 EmptyObject emptyObject=new EmptyObject();
                 emptyObject.setX(x+1);
@@ -306,8 +306,8 @@ public class Enemy implements GameObject{
             }
             if (randomNum==4 && mapObject.getCell(getX()+1,getY()).getGameObject().getTileType() != TileType.SOLID){
                 moveRight();
-                if (x==player1.getX() && y==player1.getY()){
-                    randomMovement(player1,mapObject,gameState);
+                if (x==player.getX() && y==player.getY()){
+                    randomMovement(player,mapObject,gameState);
                 }
                 EmptyObject emptyObject=new EmptyObject();
                 emptyObject.setX(x-1);

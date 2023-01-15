@@ -14,6 +14,9 @@
 -201 -> armor#1
 -210 -> key#1
 
+-120 -> shield#3
+-121 -> armor#3
+
 -----------------------------
 501 -> skeleton#1 RANDOM
 502 -> skeleton#1 FOLLOW
@@ -43,5 +46,6 @@
 700 -> door#1
 
 
-802 -> transfer room 2
+802 -> transfer wall layer1
+803 -> transer wall layer2
 

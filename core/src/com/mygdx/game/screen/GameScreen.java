@@ -4,6 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -69,6 +71,8 @@ public class GameScreen extends ScreenAdapter {
    private Room activeRoom;
    private List<TransferRoom> transferRoomList;
 
+   private Sound backgroundMusic;
+
    public Room getRoomById(int id, List<Room> roomList){
        for (Room value : roomList) {
            if (value.getId() == id) {
@@ -92,6 +96,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         super.show();
+        backgroundMusic= Gdx.audio.newSound(Gdx.files.internal("001.ogg"));
 
         messageTile=new MessageTile(0,1,8,"this a test message");
         font=new BitmapFont();
@@ -126,14 +131,17 @@ public class GameScreen extends ScreenAdapter {
         roomList.add(room);
 
         room=new Room(2,20);
-        room.importCSV(path+"wall_layer.csv");
+        room.importCSV(path+"level 1_Tile Layer 1.csv");
         room.setDecorationTileMapImage("ground.png");
         roomList.add(room);
 
-        activeRoom=getRoomById(1,roomList);
+        room=new Room(3,20);
+        room.importCSV(path+"level 2_Tile Layer 1.csv");
+        room.setDecorationTileMapImage("ground.png");
+        roomList.add(room);
+
+        activeRoom=getRoomById(2,roomList);
         numberOfTiles=activeRoom.getNumberOfTiles();
-        //room.importCSV(path+"wall_layer.csv");
-        //activeRoom.importCSV(path+"level1-1.csv");
         gameObjects=activeRoom.getGameObjects();
         chestList=activeRoom.getImportObjectTileMapCSV().getChestList();
         enemyList=activeRoom.getImportObjectTileMapCSV().getEnemyList();
@@ -156,15 +164,9 @@ public class GameScreen extends ScreenAdapter {
         cameraMapUI.update();
 
         mapObject =new MapObject(numberOfTiles,32);
-
-        //activeRoom.setDecorationTileMapImage("ground.png");
         groundDecorationMap=activeRoom.getDecorationTileMap();
 
         mapObject.setAllTilesToCell(gameObjects);
-
-        //mapObject.setGameObjectToCell(player);
-        //mapObject.setGameObjectToCell(door);
-        //mapObject.setGameObjectToCell(messageTile);
         mapObject.setGameObjectToCell(player);
 
         for (Chest chest : chestList) {
@@ -193,9 +195,10 @@ public class GameScreen extends ScreenAdapter {
         player.setTileType(TileType.PLAYER);
 
         uiMapView=new FitViewport(200,200,cameraMapUI);
-        //uiMapView.setScreenBounds(800,50,200,200);
 
         uiMapView.setScreenBounds(Gdx.graphics.getWidth()-290,Gdx.graphics.getHeight()-300,200,200);
+        //backgroundMusic.play(0.05f);
+        backgroundMusic.loop(0.2f);
     }
 
     @Override
@@ -211,15 +214,12 @@ public class GameScreen extends ScreenAdapter {
                 //if (transferRoomList.get(i).getId()==2){
                     activeRoom=getRoomById(transferRoomList.get(i).getId(),roomList);
                     numberOfTiles=activeRoom.getNumberOfTiles();
-                    //room.importCSV(path+"wall_layer.csv");
-                    //activeRoom.importCSV(path+"wall_layer.csv");
                     gameObjects=activeRoom.getGameObjects();
                     chestList=activeRoom.getImportObjectTileMapCSV().getChestList();
                     enemyList=activeRoom.getImportObjectTileMapCSV().getEnemyList();
                     messageTiles=activeRoom.getImportObjectTileMapCSV().getMessageTiles();
                     doorList=activeRoom.getImportObjectTileMapCSV().getDoors();
                     transferRoomList=activeRoom.getImportObjectTileMapCSV().getTransferRoomList();
-                    //activeRoom.setDecorationTileMapImage("ground.png");
                     groundDecorationMap=activeRoom.getDecorationTileMap();
 
                     player.setX(activeRoom.getImportObjectTileMapCSV().getPlayerX());
@@ -238,7 +238,10 @@ public class GameScreen extends ScreenAdapter {
                     for (Door door1:doorList){
                         mapObject.setGameObjectToCell(door1);
                     }
-                    break;
+                for (TransferRoom transferRoom : transferRoomList){
+                    mapObject.setGameObjectToCell(transferRoom);
+                }
+                break;
                 //}
             }
         }
@@ -265,9 +268,17 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)){
-            camera.zoom+=0.1f;
+            if (camera.zoom>1.1f){
+                camera.zoom+=0;
+            }else {
+                camera.zoom += 0.1f;
+            }
         }else if (Gdx.input.isKeyJustPressed(Input.Keys.B)){
-            camera.zoom-=0.1f;
+            if (camera.zoom<0.4f){
+                camera.zoom-=0;
+            }else {
+                camera.zoom -= 0.1f;
+            }
         }
 
         if (camera.zoom!=1){
@@ -350,6 +361,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.R) || player.getStats().getHP()<=0) {
+            backgroundMusic.stop();
             main.setScreen(new GameScreen(main,player,weaponList,shieldList,armorList,itemList,gameState));
         }
 
@@ -363,30 +375,29 @@ public class GameScreen extends ScreenAdapter {
 
         for (int i=0;i<messageTiles.size();i++) {
             if (player.getX() == messageTiles.get(i).getX() && player.getY() == messageTiles.get(i).getY()) {
-                //if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+
                 messageTiles.get(i).drawMessage(100, 150, 100, 400, camera2, messageTiles.get(i).getText());
-                //}
+
             }
         }
 
 
 
 
-            uiMapView.apply();
+            /*uiMapView.apply();
 
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setProjectionMatrix(cameraMapUI.combined);
             shapeRenderer.setColor(new Color(0, 0, 0, 0.8f));
-            shapeRenderer.rect((cameraMapUI.position.x/*player.getX()*5+201*/)-100, (cameraMapUI.position.y/*player.getY()*5+201*/)-100, 400, 400);
+            shapeRenderer.rect((cameraMapUI.position.x)-100, (cameraMapUI.position.y)-100, 400, 400);
             for (int i=0;i<activeRoom.getNumberOfTiles();i++){
                 for (int j=0;j<activeRoom.getNumberOfTiles();j++){
                     if (mapObject.getCell(i,j).getGameObject().getTileType()==TileType.SOLID){
                         shapeRenderer.setColor(new Color(1, 0, 0, 0.5f));
                         shapeRenderer.rect(i*5+201,j*5+201,5,5);
                     }else if (mapObject.getCell(i,j).getGameObject().getTileType()==TileType.ENEMY){
-                        //shapeRenderer.setColor(new Color(0.9f,0.9f,1f,0.5f));
                         shapeRenderer.setColor(new Color(0f,1f,1f,0.5f));
                         shapeRenderer.rect(i*5+201,j*5+201,5,5);
                     }
@@ -396,7 +407,7 @@ public class GameScreen extends ScreenAdapter {
             shapeRenderer.rect(player.getX()*5+201, player.getY() *5+201,5,5);
             shapeRenderer.end();
 
-            Gdx.gl.glDisable(GL20.GL_BLEND);
+            Gdx.gl.glDisable(GL20.GL_BLEND);*/
 
     }
 
@@ -418,6 +429,8 @@ public class GameScreen extends ScreenAdapter {
         super.dispose();
         batch2.dispose();
         bloodImg.dispose();
+        backgroundMusic.dispose();
+        player.disposeSound();
 
         batch.dispose();
         mapObject.dispose();
